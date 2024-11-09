@@ -1,52 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input, Textarea, Button, Select, Option } from "@material-tailwind/react";
-const CreateTask = () => {
-  const employeesDataFromLocal = localStorage.getItem("employees") || [];
-  const employees = JSON.parse(employeesDataFromLocal);
-  // console.log("CreateTask :: employees:", JSON.parse(employees));
+import db from "../../appwrite/databases";
 
+const CreateTask = () => {
+  const [tasks, setTasks] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [task, setTask] = useState({
     title: "",
-    date: "",
+    deadline: "",
     assignTo: "",
     category: "",
     priority: "",
     description: "",
+    taskStatus: "Pending",
+    assignedDate: dayjs().format('DD-MM-YYYY'),
+    isCompleted: false,
   });
+
+  const listTasks = async () => {
+    const res = await db.tasks.list();
+    setTasks(res.documents);
+  };
+
+  const createTask = async (task) => {
+    try {
+      const payload = task;
+
+      console.log("Creating new task:", payload);
+
+      await db.tasks.create(payload);
+      listTasks();
+    } catch (error) {
+      console.error("Failed to create task:", error);
+    }
+  };
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
-  const handleTaskSubmit = (e) => {
+  const handleTaskSubmit = async (e) => {
     e.preventDefault();
 
-    employees.find((employee) => {
-      if (employee.id === task.assignTo) {
-        // Add task to the employee's tasks arra
-        employee.tasks = employee.tasks || [];
-        employee.tasks.push({
-          id: "TSK" + employee.tasks.length + 1,
-          name: task.title,
-          assignedDate: new Date().toLocaleDateString(),
-          deadline: task.date,
-          description: task.description,
-          category: task.category,
-          priority: task.priority,
-          taskStatus: "Pending",
-          isNew: true,
-          isActive: true,
-        });
-
-        console.log("Task assigned to:", employee.name);
-      }
-    });
-
-    localStorage.setItem("employees", JSON.stringify(employees));
+    await createTask(task);
 
     // Reset form fields and close modal
     setTask({
       title: "",
-      date: "",
+      deadline: "",
       assignTo: "",
       category: "",
       priority: "",
@@ -79,11 +78,11 @@ const CreateTask = () => {
       {isModalOpen && (
         <div
           className='fixed inset-0 z-[999] flex justify-center bg-gray-800 bg-opacity-80 backdrop-blur-sm transition-opacity duration-300 animate-fadeIn'
-          onClick={toggleModal} // Close modal when clicking on backdrop
+          onClick={toggleModal}
         >
           <div
             className='relative mt-10 p-6 w-full max-w-2xl h-full max-h-fit rounded-lg bg-[#2c2c2c] text-white shadow-lg animate-slideDown'
-            onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking inside
+            onClick={(e) => e.stopPropagation()}
           >
             <button onClick={toggleModal} className='absolute top-6 right-6 text-gray-500 hover:text-gray-300'>
               <svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='white'>
@@ -106,12 +105,12 @@ const CreateTask = () => {
                   onChange={handleChange}
                 />
                 <Input
-                  label='Date'
+                  label='Deadline'
                   type='date'
                   required
                   color='white'
                   className='w-full text-white'
-                  name='date'
+                  name='deadline'
                   value={task.date}
                   onChange={handleChange}
                 />

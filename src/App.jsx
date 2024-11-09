@@ -25,6 +25,7 @@ const App = () => {
         name: employeeUser.name,
         role: "employee",
         tasks: employeeUser.tasks,
+        employeeId: employeeUser.id,
       };
       setLoggedInUserData(employeeData);
       localStorage.setItem("loggedInUser", JSON.stringify(employeeData));

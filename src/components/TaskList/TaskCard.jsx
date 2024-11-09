@@ -1,26 +1,38 @@
-import { useState } from "react";
-import { Chip, Button, Option } from "@material-tailwind/react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { Chip, Button, Option, Select } from "@material-tailwind/react";
+import db from "../../appwrite/databases.js";
 
-const TaskCard = ({ priority, assignedDate, deadline, title, description, status = "Pending", category }) => {
+const TaskCard = ({
+  priority,
+  assignedDate,
+  deadline,
+  title,
+  description,
+  status: initialStatus,
+  category,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [status, setStatus] = useState(initialStatus); // Initialize with prop
+  const [employees, setEmployees] = useState([]); // State to store employees
 
-  
+  const handleEditClick = () => {
+    setIsEditing(!isEditing);
+  };
 
-  // const [status, setStatus] = useState("Pending");
+  useEffect(() => {
+    
+  }, []);
 
-  // const handleEditClick = () => {
-  //   setIsEditing(!isEditing);
-  // };
+  const handleStatusChange = (newStatus) => {
+    setStatus(newStatus);
+    setIsEditing(false);
+    // #TODO: Update task status in database
+    const updateTask = async () => {
+      const res = await db.tasks.update(task.$id, { taskStatus: newStatus });
+      console.log(res);
+    };
 
-  // const handleStatusChange = (newStatus) => {
-  //   setStatus(newStatus);
-  //   setIsEditing(false);
-  // };
-
-  // useEffect(() => {
-  //   console.log(status);
-  // }, [status]);
+  };
 
   return (
     <div className='min-h-[300px] flex flex-col justify-between flex-shrink-0 w-[330px] bg-purple-600 rounded-md shadow-lg'>
@@ -34,13 +46,38 @@ const TaskCard = ({ priority, assignedDate, deadline, title, description, status
         <p className='text-sm text-gray-300 line-clamp-6'>{description}</p>
         <h4 className='text-sm font-medium '>Deadline: {deadline}</h4>
       </div>
-      <div className='flex justify-between items-center p-4 '>
+      <div className='flex justify-between items-center p-4'>
         <span className='text-sm font-medium text-white'>Status: {status}</span>
-        <button className='text-xs px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700' onClick={() => {}}>
+        <Button size='sm' color='blue' onClick={handleEditClick}>
           Edit
-        </button>
+        </Button>
       </div>
-      {isEditing && <div>Edit Status</div>}
+      {isEditing && (
+        <div className='p-4 text-black'>
+          <Select
+            color='blue'
+            value={status}
+            size='md'
+            onChange={handleStatusChange}
+            label='Change Status'
+            className='text-black'
+            labelProps={{ className: "text-white" }} // Custom label color
+          >
+            <Option value='Pending' className='text-black mt-2'>
+              Pending
+            </Option>
+            <Option value='In Progress' className='text-black mt-2'>
+              In Progress
+            </Option>
+            <Option value='Completed' className='text-black mt-2'>
+              Completed
+            </Option>
+            <Option value='Failed' className='text-black mt-2'>
+              Failed
+            </Option>
+          </Select>
+        </div>
+      )}
     </div>
   );
 };

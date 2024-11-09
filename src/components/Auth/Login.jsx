@@ -25,9 +25,9 @@ const Login = ({ handleLogin }) => {
       // console.log("Email:", email);
       // console.log("Password:", password);
       handleLogin(email, password);
+
     }
   };
-
 
   return (
     <div className='w-full h-screen flex items-center justify-center '>
