@@ -4,6 +4,7 @@ import { getLocalStorage } from "../utils/localStorage";
 export const AuthContext = React.createContext();
 
 const AuthProvider = ({ children }) => {
+  
   const [usersInfo, setUsersInfo] = useState({});
 
   useEffect(() => {

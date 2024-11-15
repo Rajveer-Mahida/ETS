@@ -8,7 +8,7 @@ const AdminDashboard = ({ user }) => {
   return (
     <div className='p-8'>
       <Header user={user} />
-      <CreateTask />
+
       <AllTask />
     </div>
   );
