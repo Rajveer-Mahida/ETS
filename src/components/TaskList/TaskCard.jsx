@@ -2,16 +2,7 @@ import { useState, useEffect } from "react";
 import { Chip, Button, Option, Select } from "@material-tailwind/react";
 import db from "../../appwrite/databases.js";
 
-const TaskCard = ({
-  priority,
-  id,
-  assignedDate,
-  deadline,
-  title,
-  description,
-  status: initialStatus,
-  category,
-}) => {
+const TaskCard = ({ priority, id, assignedDate, deadline, title, description, status: initialStatus, category }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [status, setStatus] = useState(initialStatus); // Initialize with prop
   const [employees, setEmployees] = useState([]); // State to store employees
@@ -20,19 +11,13 @@ const TaskCard = ({
     setIsEditing(!isEditing);
   };
 
-  useEffect(() => {
-    
-  }, []);
+  useEffect(() => {}, []);
 
-  const handleStatusChange = async(newStatus) => {
+  const handleStatusChange = async (newStatus) => {
     setStatus(newStatus);
     setIsEditing(false);
-    // #TODO: Update task status in database
-    const res = await db.tasks.update(id, { taskStatus: newStatus });
-    console.log(res);
-    const updateTask = async () => {
-    };
-
+    await db.tasks.update(id, { taskStatus: newStatus });
+    
   };
 
   return (

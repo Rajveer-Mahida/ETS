@@ -1,15 +1,15 @@
 const employees = [
   {
     id: "EMP001",
-    name: "Sarah Chen",
-    email: "demo@mail.com",
-    password: "demo@mail.com",
+    name: "Rajveer Mahida",
+    email: "demo@employee.com",
+    password: "spidy123",
     department: "Frontend Development",
     tasks: [
       {
         id: "TSK001",
         name: "Implement User Dashboard",
-        description: "Create responsive dashboard with user statistic s and activity graphs",
+        description: "Create responsive dashboard with user statistics and activity graphs",
         category: "Development",
         taskStatus: "In Progress",
         isNew: false,
@@ -34,8 +34,8 @@ const employees = [
   },
   {
     id: "EMP002",
-    name: "James Wilson",
-    email: "james.wilson@company.com",
+    name: "Jayesh Kumar",
+    email: "jayesh.kumar@company.com",
     password: "spidy123",
     department: "Backend Development",
     tasks: [
@@ -100,8 +100,8 @@ const employees = [
   },
   {
     id: "EMP004",
-    name: "Michael Rodriguez",
-    email: "michael.r@company.com",
+    name: "Manish Verma",
+    email: "manish.verma@company.com",
     password: "spidy123",
     department: "Quality Assurance",
     tasks: [
@@ -133,8 +133,8 @@ const employees = [
   },
   {
     id: "EMP005",
-    name: "Lisa Thompson",
-    email: "lisa.t@company.com",
+    name: "Ananya Sharma",
+    email: "ananya.sharma@company.com",
     password: "spidy123",
     department: "UI/UX Design",
     tasks: [

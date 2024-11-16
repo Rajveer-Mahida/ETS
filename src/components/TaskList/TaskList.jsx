@@ -7,8 +7,6 @@ const TaskList = ({ user }) => {
   const listTasks = async () => {
     const res = await db.tasks.list();
     setTasks(res.documents);
-
-    console.log(res);
   };
   useEffect(() => {
     listTasks();
@@ -23,7 +21,7 @@ const TaskList = ({ user }) => {
         tasks.map((task, index) => (
           <TaskCard
             key={task.$id}
-            id={task.$id} 
+            id={task.$id}
             priority={task.priority}
             assignedDate={task.assignedDate}
             deadline={task.deadline}
