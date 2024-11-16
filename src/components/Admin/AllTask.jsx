@@ -13,8 +13,15 @@ const AllTask = () => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const { tasks, isLoading, error, listTasks } = useContext(TaskContext);
-  const uniqueCategories = ["All", ...new Set(tasks.map((task) => task.category))];
-  const filteredTasks = tasks.filter((task) => filter === "All" || task.category === filter);
+  const uniqueCategories = ["All", ...new Set(tasks.map((task) => String(task.category)))];
+  const filteredTasks = filter === "All" ? tasks : tasks.filter((task) => task.category === filter);
+
+  const statusColors = {
+    Pending: "bg-yellow-500/20 text-yellow-300",
+    "In Progress": "bg-blue-500/20 text-blue-300",
+    Completed: "bg-green-500/20 text-green-300",
+    Failed: "bg-red-500/20 text-red-300",
+  };
 
   const handleDeleteClick = (task) => {
     setTaskToDelete(task);
@@ -34,10 +41,7 @@ const AllTask = () => {
     try {
       setIsDeleting(true);
       await db.tasks.delete(taskToDelete.$id);
-
-      // Fetch the latest tasks after deletion
       await listTasks();
-
       handleCloseDialog();
     } catch (error) {
       console.error("Failed to delete task:", error);
@@ -53,12 +57,11 @@ const AllTask = () => {
       <div className='bg-[#1c1c1c] p-4 sm:p-5 rounded mt-5 h-full pb-10'>
         <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center'>
           <h2 className='text-xl sm:text-2xl font-semibold mb-2 sm:mb-0'>All Tasks</h2>
-
           <div className='mt-2 sm:mt-0'>
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className='px-3 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className='px-3 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-gray-600'
             >
               {uniqueCategories.map((category) => (
                 <option key={category} value={category}>
@@ -84,15 +87,22 @@ const AllTask = () => {
                   className='flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#2c2c2c] p-4 rounded-xl transition-all hover:bg-[#323232]'
                 >
                   <div className='flex-1 mb-2 sm:mb-0'>
-                    <h3 className='text-lg font-semibold'>{task.title}</h3>
+                    <div className='text-lg font-semibold'>
+                      {task.title}
+                      <span
+                        className={`text-sm ml-2 px-2 py-1 rounded ${
+                          statusColors[task.taskStatus] || "bg-gray-500/20 text-gray-300"
+                        }`}
+                      >
+                        {task.taskStatus}
+                      </span>
+                      <span className='text-sm ml-2 px-2 py-1 rounded bg-purple-500/20 text-purple-300 mt-1'>
+                        {task.category}
+                      </span>
+                    </div>
+
                     <span className='text-sm text-gray-300'>{task.description}</span>
                     <p className='text-sm text-gray-300 mt-1'>Deadline: {task.deadline}</p>
-                  </div>
-                  <div className='flex flex-col items-start sm:items-end mb-2 sm:mb-0'>
-                    <p className='text-md font-semibold'>{task.empName}</p>
-                    <span className='text-sm px-2 py-1 rounded bg-purple-500/20 text-purple-300 mt-1'>
-                      {task.category}
-                    </span>
                   </div>
                   <Button
                     size='sm'
@@ -101,7 +111,7 @@ const AllTask = () => {
                     className='ml-0 sm:ml-4 mt-2 sm:mt-0'
                     disabled={isDeleting && taskToDelete?.$id === task.$id}
                   >
-                    Delete
+                    {isDeleting && taskToDelete?.$id === task.$id ? "Deleting..." : "Delete"}
                   </Button>
                 </div>
               ))
@@ -109,7 +119,6 @@ const AllTask = () => {
           </div>
         )}
 
-        {/* Confirmation Dialog */}
         <Dialog open={openDialog} handler={handleCloseDialog}>
           <DialogHeader>Confirm Deletion</DialogHeader>
           <DialogBody className='text-gray-700'>

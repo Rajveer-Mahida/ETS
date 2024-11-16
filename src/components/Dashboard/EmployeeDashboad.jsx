@@ -8,7 +8,7 @@ const EmployeeDashboad = ({ user }) => {
     <div className='w-full  p-8  '>
       <Header user={user} />
       <TaskStatusInfo user={user} />
-      <TaskList  />
+      <TaskList />
     </div>
   );
 };
